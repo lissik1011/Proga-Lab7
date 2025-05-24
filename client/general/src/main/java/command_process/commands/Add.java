@@ -16,8 +16,8 @@ public class Add implements Command{
         if (!args.isEmpty()) throw new IllegalArgumentException("Неизвестные аргументы. Введите help, чтобы узнать доступные команды.");
         
         LabWork labwork = new CollectionManager().getLabWork(scan);
-
         String answ = MakeResponse.answer(UDPClient.sendAndReceive(MakeRequest.request(new CreateSendableObject("add", labwork))));
+
         if (!answ.isEmpty()) {
             System.out.println(answ);
         } else {

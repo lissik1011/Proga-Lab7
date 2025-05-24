@@ -12,7 +12,7 @@ public class Update implements Command{
             long id = Long.parseLong(args);
             LabWork lab = CollectionManager.findLabWorkById(id);
             if (lab != null){
-                LabWork newLab = new LabWork(lab.getId(), labWork, lab.getCreationDate());
+                LabWork newLab = CollectionManager.getDB().update(labWork, id);
                 CollectionManager.getLabWorks().remove(lab);   
                 addLab(newLab);
                 return "Элемент обновлен.";

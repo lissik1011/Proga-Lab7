@@ -8,9 +8,14 @@ public class Clear implements Command{
     @Override
     public String execute(String args, LabWork labwork) {
 
-        CollectionManager.getLabWorks().clear();
-        Info.counterOfMod();
-
-        return "Коллекция очищена.";
+        if (CollectionManager.getDB().clear()) {
+            CollectionManager.getLabWorks().clear();
+            CollectionManager.clearIdSet();
+            Info.counterOfMod();
+    
+            return "Коллекция очищена.";
+        } else {
+            return "Не удалось удалить элементы.";
+        }
     }
 }

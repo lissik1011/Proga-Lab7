@@ -30,7 +30,7 @@ public class CreateSendableObject implements Serializable{
         this.args = args;
         this.labWork = labWork;
     }
-    
+
     public CreateSendableObject(String command, File file){
         this.command = command;
         this.file = file;

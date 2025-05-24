@@ -2,8 +2,6 @@ package command_process.commands;
 
 import java.util.Scanner;
 
-import command_process.collection_manager.CollectionManager;
-import command_process.data.LabWork;
 import connection.UDPClient;
 import read_queries.CreateSendableObject;
 import read_queries.MakeRequest;
@@ -18,8 +16,7 @@ public class RemoveById implements Command{
 
         String answFirst = MakeResponse.answer(UDPClient.sendAndReceive(MakeRequest.request(new CreateSendableObject("find_id", args))));
         if (answFirst.isEmpty()) {
-            LabWork labwork = new CollectionManager().getLabWork(scan);
-            String answ = MakeResponse.answer(UDPClient.sendAndReceive(MakeRequest.request(new CreateSendableObject("remove_by_id", args, labwork))));
+            String answ = MakeResponse.answer(UDPClient.sendAndReceive(MakeRequest.request(new CreateSendableObject("remove_by_id", args))));
             if (!answ.isEmpty()) {
                 System.out.println(answ);
             } else {

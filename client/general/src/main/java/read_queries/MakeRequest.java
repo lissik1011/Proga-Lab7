@@ -18,8 +18,11 @@ public class MakeRequest {
             return byteArrayOutputStream.toByteArray();            
         } catch (IOException e) {
             System.out.println("Ошибка сериализации данных." + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            System.out.println("Ошибка! client/read_queries/MakeResponse");
+            return null;
         }
-        return null;
     }
 
     public static byte[] fileBytes(File file) {

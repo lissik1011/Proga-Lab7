@@ -18,7 +18,7 @@ public class CommandManager{
             String arg = takeCommand(commandLine)[1];
             try {
                 execute(com, arg);
-                History.addHistory(com);
+                if (!com.equals("Find_id")) History.addHistory(com);
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }

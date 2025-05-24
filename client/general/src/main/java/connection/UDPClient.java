@@ -8,7 +8,7 @@ import java.net.SocketTimeoutException;
 
 public class UDPClient{
   public final static int SERVICE_PORT = 54021;
-  private final static int TIMEOUT_MS = 5000; // 5 секунд таймаут
+  private final static int TIMEOUT_MS = 3000; // 5 секунд таймаут
   private final static int MAX_RETRIES = 5; // Максимальное количество попыток
   
   public static byte[] sendAndReceive(byte[] sendingData) {
@@ -19,7 +19,7 @@ public class UDPClient{
           clientSocket.setSoTimeout(TIMEOUT_MS);
           InetAddress IPAddress = InetAddress.getByName("localhost");
 
-          DatagramPacket sendingPacket = new DatagramPacket(sendingData,sendingData.length,IPAddress, SERVICE_PORT);
+          DatagramPacket sendingPacket = new DatagramPacket(sendingData, sendingData.length,IPAddress, SERVICE_PORT);
           clientSocket.send(sendingPacket);
           
           DatagramPacket receivingPacket = new DatagramPacket(receivingDataBuffer,receivingDataBuffer.length);

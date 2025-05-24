@@ -1,5 +1,6 @@
 package command_process.commands;
 
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 import command_process.collection_manager.CollectionManager;
@@ -13,6 +14,7 @@ public class PrintAscending implements Command{
             return "Коллекция пуста.";
         } else {
             return CollectionManager.getLabWorks().stream()
+            .sorted((Comparator.comparingLong(LabWork::getId)))
             .map(LabWork::toString).collect(Collectors.joining());
         }
     }

@@ -13,7 +13,6 @@ public class ReadFile implements Command {
         Path file = Paths.get(args);
         String answer = Input.input(TakeCsv.takeCsv(file));
         if (answer.isEmpty()) {
-            Exit.setFileName("", true);
             return "Объекты добавлены в коллекцию.";
         } 
         else return answer;

@@ -1,15 +1,18 @@
 package command_process.data;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import command_process.helpfull.Collect;
+import command_process.helpfull.Validation;
 
-public class LabWork extends Collect implements Serializable{
+public class LabWork implements Validation, Serializable{
+    private static final long serialVersionUID = 7255001375888618425L;
+    
     private long id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates; //Поле не может быть null
-    private final LocalDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    private LocalDateTime creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     private Integer minimalPoint; //Поле не может быть null, Значение поля должно быть больше 0
     private Difficulty difficulty; //Поле не может быть null
     private Person author; //Поле может быть null
@@ -17,10 +20,8 @@ public class LabWork extends Collect implements Serializable{
     // Для создания объектов пользователем
     public LabWork(String name, Coordinates coordinates,
         Integer minimalPoint, Difficulty difficulty, Person author){
-        this.id = this.takeId();
         this.name = name;
         this.coordinates = coordinates;
-        this.creationDate = LocalDateTime.now();
         this.minimalPoint = minimalPoint;
         this.difficulty = difficulty;
         this.author = author;
@@ -39,16 +40,16 @@ public class LabWork extends Collect implements Serializable{
     }
 
     // Для обновления
-        public LabWork(long id, LabWork labWork, LocalDateTime creationDate){
-            this.id = id;
-            this.name = labWork.getName();
-            this.coordinates = labWork.getCoordinates();
-            this.creationDate = creationDate;
-            this.minimalPoint = labWork.getMinimalPoint();   
-            this.difficulty = labWork.getDifficulty();
-            this.author = labWork.getAuthor();
-        }
-        
+    public LabWork(long id, LabWork labWork, LocalDateTime creationDate){
+        this.id = id;
+        this.name = labWork.getName();
+        this.coordinates = labWork.getCoordinates();
+        this.creationDate = creationDate;
+        this.minimalPoint = labWork.getMinimalPoint();   
+        this.difficulty = labWork.getDifficulty();
+        this.author = labWork.getAuthor();
+    }
+    
     @Override
     public String toString(){
         return String.format("LabWork{%n id: %d, %n name: %s,%n coordinates: %s,%n creationDate: %s,%n minimalPoint: %s,%n difficulty: %s,%n Person: {%s} }%n\n", 

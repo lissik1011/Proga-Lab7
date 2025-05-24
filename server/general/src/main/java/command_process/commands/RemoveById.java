@@ -16,9 +16,13 @@ public class RemoveById implements Command{
                 LabWork lab = CollectionManager.findLabWorkById(id);
                 if (lab == null) return "Работы с таким id не существует. REMOVEBYID";
                 else {
-                    CollectionManager.getLabWorks().remove(lab);
-                    CollectionManager.removeId(lab.getId());
-                    return "Элемент с id = " + id + " успешно удален.";
+                    if (CollectionManager.getDB().removeId(id, "=")) {
+                        CollectionManager.getLabWorks().remove(lab);
+                        CollectionManager.removeId(lab.getId());
+                        return "Элемент с id = " + id + " успешно удален.";
+                    } else {
+                        return "Не удалось удалить элемент";
+                    }
                 }
             }   
         } catch (NumberFormatException e) {
