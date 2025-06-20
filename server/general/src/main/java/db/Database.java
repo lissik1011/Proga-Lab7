@@ -128,8 +128,8 @@ public class Database {
                 pst.executeQuery();
 
             } catch (SQLException e) {
-                System.out.println("Ошбика добавления элемента в базу данных.");
-            }            
+                if (!e.getMessage().equals("Запрос не вернул результатов.")) System.out.println("Ошбика добавления элемента в базу данных." + e.getMessage());
+            }
         }
     }
 

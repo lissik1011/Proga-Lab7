@@ -1,0 +1,162 @@
+@startuml client
+class Main {
+  Scanner scan
+  void main(String[])
+}
+class UDPClient{
+  SERVICE_PORT = 54021
+  TIMEOUT_MS = 5000
+  MAX_RETRIES = 5
+  byte[] sendAndReceive(byte[])
+}
+class MakeResponse {
+    String answer(byte[])
+}
+class MakeRequest {
+    byte[] request(Object)
+    byte[] fileBytes(File)
+}
+class CreateSendableObject implements Serializable{
+    String command
+    String args
+    LabWork labWork
+    File file
+    File getFile()
+    String getCommand()
+    String getArgs()
+    LabWork getLabWork()
+}
+
+class CollectionManager {
+    LabWork getLabWork(Scanner)
+}
+interface Command {
+    void execute(String, Scanner)
+}
+class CommandMeneger {
+    MakeListOfCommands list
+    void startProg(Deque<LabWork>, Scanner)
+    String[] takeCommand(String)
+    boolean loyalCom(String)
+    boolean thisIsCommand(String)
+    void execute(String, String, Scanner)
+}
+class MakeListOfCommands {
+    HashMap<String, Command> listCommands
+    HashMap<String, Command> takeList()
+    Set<String> getKeys()
+    void addRecord(String name, Command command)
+    static {}
+}
+class Add implements Command {
+    void execute(String, Scanner)
+}
+class Clear implements Command {
+    void execute(String, Scanner)
+}
+class ExecuteScript implements Command {
+    boolean scannerTypeIsSystemIn
+    void execute(String, Scanner)
+    boolean getScannerType()
+}
+class Exit implements Command {
+    String file_name
+    void execute(String, Scanner)
+    void setFileName(String name)
+}
+class FilterConteinsName implements Command {
+    void execute(String, Scanner)
+}
+class GroupCountinfByAuthor implements Command {
+    void execute(String, Scanner)
+}
+class Head implements Command {
+    void execute(String, Scanner)
+}
+class Help implements Command {
+    void execute(String, Scanner)
+}
+class History implements Command {
+    void execute(String, Scanner)
+}
+class Info implements Command {
+    void execute(String, Scanner)
+}
+class PrintAscending implements Command {
+    void execute(String, Scanner)
+}
+class RemoveById implements Command {
+    void execute(String, Scanner)
+}
+class RemoveGreaterById implements Command {
+    void execute(String, Scanner)
+}
+class Save implements Command {
+    void execute(String, Scanner)
+}
+class Show implements Command {
+    void execute(String, Scanner)
+}
+class Update implements Command {
+    void execute(String, Scanner)
+}
+
+class LabWork extends Collect{
+    long id
+    String name
+    Coordinates coordinates
+    LocalDateTime creationDate
+    Integer minimalPoint
+    Difficulty difficulty
+    Person author
+    String toString()
+    boolean validate()
+    Type get()
+    void set(Type)
+}
+class Coordinates implements Validation {
+    Integer x
+    Float y
+    toString()
+    toCSV()
+    boolean validate()
+    Type get()
+    void set(Type)
+}
+enum Difficulty {
+    HARD
+    HOPELESS
+    TERRIBLE
+}
+class Person implements Validation {
+    String name
+    Float weigh
+    String passportID
+    Location location
+    String toString()
+    String toCSV()
+    boolean validate()
+    Type get()
+    void set(Type)
+}
+class Location implements Validation {
+    Float x
+    Double y
+    String name
+    String toString()
+    String toCSV()
+    boolean validate()
+    Type get()
+    void set(Type)
+}
+class Collect implements Validation {
+    long counter
+    long takeId()
+    void printId()
+}
+interface Validation {
+    boolean validate()
+}
+
+
+@enduml

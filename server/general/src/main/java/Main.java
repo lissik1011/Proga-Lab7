@@ -5,6 +5,7 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.sql.SQLException;
+import java.util.concurrent.ForkJoinPool;
 
 import accept_connections.UDPServer;
 import command_process.collection_manager.CollectionManager;
@@ -25,10 +26,11 @@ public class Main {
     static MakeListOfCommands list = new MakeListOfCommands();
     
     public static void main(String[] args) {
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
 
-        if (args.length != 2) {
+        if (args.length != 2 && args.length != 0) {
             System.out.println("Введите пользователя и пароль.");
-            System.exit(0);
+            System.exit(0); 
         }
         
         CommandManager commandManager = new CommandManager();
@@ -44,7 +46,8 @@ public class Main {
 
         while (counter < 5) {
             try {
-                db = new Database(args[0], args[1]);
+                if (args.length == 2) db = new Database(args[0], args[1]);
+                else db = new Database("s466560", "er5DtMk5VuEXWO11");
                 connected = true;
                 new CollectionManager().setDB(db);
                 break;
@@ -55,7 +58,8 @@ public class Main {
         }
 
         if (!connected) {
-            System.err.println("Все попытки подключения исчерпаны.\nПроверьте, что введены верные пользователь и пароль.");
+            if (args.length == 2) System.err.println("Все попытки подключения исчерпаны.\nПроверьте, что введены верные пользователь и пароль, а также не забудьте пробросить порт: `ssh -L 5432:localhost:5432 s******@helios.cs.ifmo.ru -p 2222` или иное.");
+            else System.err.println("Все попытки подключения исчерпаны.\nНе забудьте пробросить порт: `ssh -L 5432:localhost:5432 s466560@helios.cs.ifmo.ru -p 2222`");
             System.exit(0);
         }
         
@@ -77,36 +81,71 @@ public class Main {
                     buffer.get(receivedData);
                     buffer.clear();
 
-                    CreateSendableObject query = MakeQueries.answer(receivedData);
-                    // if (query == null) {
-                    //     System.out.println("Ошибка в получении данных от клиента.");
-                    //     SendResponse.send(channel, clientAddress, MakeResponse.response("Ошибка в обработке запроса."));
-                    //     continue;
-                    // }
-                    String commandName = query.getCommand();
-                    if (commandName.contains("log_in") || commandName.contains("sign_up")) {
-                        System.out.println("Выполнение команды " + commandName);
-                        History.addHistory(commandName);
-                        if (commandName.contains("log_in")) {
-                        String response = LogIn.execute(query.getUser());
-                        SendResponse.send(channel, clientAddress, MakeResponse.response(response));
-                        } else {
-                            String response = SignUp.execute(query.getUser());
-                            SendResponse.send(channel, clientAddress, MakeResponse.response(response));
-                        }
-                    } else {
-                        Command command = list.takeList().get(commandName);
-                        System.out.println("Выполнение команды " + commandName);
-                        History.addHistory(commandName);
-                        String response = command.execute(query.getArgs(), query.getLabWork(), query.getLogin());
-
-                        SendResponse.send(channel, clientAddress, MakeResponse.response(response));
-                    }
+                    forkJoinPool.execute(() -> handleClientRequest(forkJoinPool, channel, clientAddress, receivedData));
                 }
             }
         } catch (IOException  e) {
-            System.out.println(e.getMessage());
+            System.out.println("Ошибка ввода/вывода. " + e.getMessage());
         }
         System.out.println("Конец программы. server/Main");
+    }
+
+
+    private static void handleClientRequest(ForkJoinPool pool, DatagramChannel channel, SocketAddress clientAddress, byte[] receivedData) {
+        // Задача 1: десериализация запроса
+        CreateSendableObject query;
+        try {
+            query = MakeQueries.answer(receivedData);
+        } catch (Exception e) {
+            System.err.println("Ошибка десериализации запроса.");
+            return;
+        }
+    
+        if (query == null) {
+            pool.execute(() -> sendErrorResponse(channel, clientAddress, "Ошибка в обработке запроса."));
+            return;
+        }
+    
+        String commandName = query.getCommand();
+        History.addHistory(commandName);
+    
+        // Задача 2: обработка команды
+        pool.execute(() -> {
+            try {
+                String response;
+                if (commandName.contains("log_in")) {
+                    response = LogIn.execute(query.getUser());
+                } else if (commandName.contains("sign_up")) {
+                    response = SignUp.execute(query.getUser());
+                } else {
+                    Command command = list.takeList().get(commandName);
+                    response = command.execute(query.getArgs(), query.getLabWork(), query.getLogin());
+                }
+    
+                // Задача 3: отправка ответа
+                pool.execute(() -> sendResponse(channel, clientAddress, response));
+    
+            } catch (Exception e) {
+                pool.execute(() -> sendErrorResponse(channel, clientAddress, "Ошибка выполнения: " + e.getMessage()));
+            }
+        });
+    }
+
+    private static void sendResponse(DatagramChannel channel, SocketAddress clientAddress, String response) {
+        byte[] responseData = MakeResponse.response(response);
+        try {
+            SendResponse.send(channel, clientAddress, responseData);
+        } catch (IOException e) {
+            System.err.println("Не удалось отправить ответ.");
+        }
+    }
+    
+    private static void sendErrorResponse(DatagramChannel channel, SocketAddress clientAddress, String message) {
+        byte[] errorData = MakeResponse.response(message);
+        try {
+            SendResponse.send(channel, clientAddress, errorData);
+        } catch (IOException e) {
+            System.err.println("Не удалось отправить ошибку.");
+        }
     }
 }

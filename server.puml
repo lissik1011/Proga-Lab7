@@ -1,0 +1,64 @@
+@startuml server
+class Main {
+  MakeListOfCommands list
+  void main(String[])
+}
+class UserManager {
+    Deque<User> users
+    TreeSet<String> NikSet
+    String login
+    UserManager(String login)
+    String getLogin()
+    void setLogin(String login)
+    void addUser(User user)
+    void addNikname(String nikname)
+}
+class User implements Serializable {
+    String login
+    String password
+    String getLogin()
+    String getPassword()
+}
+class SignUp {
+    String execute(User user)
+}
+class LogIn {
+    String execute(User user)
+}
+class HashUtil {
+    byte[] hashPassword(String password)
+    boolean isPasswordMatch(String inputPassword, byte[] storedHash)
+}
+
+class Main {
+  MakeListOfCommands list
+  void main(String[])
+}
+class UserManager {
+    Deque<User> users
+    TreeSet<String> NikSet
+    String login
+    UserManager(String login)
+    String getLogin()
+    void setLogin(String login)
+    void addUser(User user)
+    void addNikname(String nikname)
+}
+class User implements Serializable {
+    String login
+    String password
+    String getLogin()
+    String getPassword()
+}
+class SignUp {
+    String execute(User user)
+}
+class LogIn {
+    String execute(User user)
+}
+class HashUtil {
+    byte[] hashPassword(String password)
+    boolean isPasswordMatch(String inputPassword, byte[] storedHash)
+}
+
+@enduml
