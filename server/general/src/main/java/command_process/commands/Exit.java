@@ -5,7 +5,7 @@ import command_process.data.LabWork;
 // Завершить программу (без сохранения в файл).
 public class Exit implements Command{
     @Override
-    public String execute(String args, LabWork labwork) {
+    public String execute(String args, LabWork labwork, String login) {
         return "Завершение работы программы.";
     }
 }

@@ -10,7 +10,7 @@ public class History implements Command {
     static Deque<String> history = new ArrayDeque<>();
 
     @Override
-    public String execute(String args, LabWork labWork) {
+    public String execute(String args, LabWork labWork, String login) {
         String answ = "";
         if (!history.isEmpty()) {
             for (String e : history) {

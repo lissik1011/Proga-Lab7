@@ -6,7 +6,7 @@ import command_process.data.LabWork;
 // Вывести первый элемент коллекции.
 public class Head implements Command{
     @Override
-    public String execute(String args, LabWork labWork) {
+    public String execute(String args, LabWork labWork, String login) {
 
         if (CollectionManager.getLabWorks().peek() != null) {
             return CollectionManager.getLabWorks().peek().toString();

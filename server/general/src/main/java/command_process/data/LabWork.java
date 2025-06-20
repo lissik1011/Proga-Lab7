@@ -8,7 +8,7 @@ import command_process.helpfull.Validation;
 
 public class LabWork implements Validation, Serializable{
     private static final long serialVersionUID = 7255001375888618425L;
-
+    
     private long id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates; //Поле не может быть null
@@ -16,6 +16,7 @@ public class LabWork implements Validation, Serializable{
     private Integer minimalPoint; //Поле не может быть null, Значение поля должно быть больше 0
     private Difficulty difficulty; //Поле не может быть null
     private Person author; //Поле может быть null
+    private String user;
 
     // Для создания объектов пользователем
     public LabWork(String name, Coordinates coordinates,
@@ -49,14 +50,26 @@ public class LabWork implements Validation, Serializable{
         this.difficulty = labWork.getDifficulty();
         this.author = labWork.getAuthor();
     }
+
+    public LabWork(LabWork lab, String user) {
+        this.id = lab.id;
+        this.name = lab.name;
+        this.coordinates = lab.coordinates;
+        this.creationDate = lab.creationDate;
+        this.minimalPoint = lab.minimalPoint;
+        this.difficulty = lab.difficulty;
+        this.author = lab.author;
+        this.user = user;
+    }
     
     @Override
     public String toString(){
-        return String.format("LabWork{%n id: %d, %n name: %s,%n coordinates: %s,%n creationDate: %s,%n minimalPoint: %s,%n difficulty: %s,%n Person: {%s} }%n\n", 
+        return String.format("LabWork{%n id: %d, %n name: %s,%n coordinates: %s,%n creationDate: %s,%n minimalPoint: %s,%n difficulty: %s,%n Person: {%s} %n User: %s}%n\n", 
             this.getId(), name, coordinates, 
             creationDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")),
             minimalPoint, difficulty,
-            (author == null ? "null" : author));
+            (author == null ? "null" : author),
+            user);
     }
 
     @Override
@@ -94,6 +107,9 @@ public class LabWork implements Validation, Serializable{
     public Person getAuthor(){
         return author;
     }
+    public String getUser() {
+        return user;
+    }
 
     // set
     public void setId(long id){
@@ -113,6 +129,9 @@ public class LabWork implements Validation, Serializable{
     }
     public void setAuthor(Person author) {
         this.author = author;
+    }
+    public void setUser(String user) {
+        this.user = user;
     }
 
 }

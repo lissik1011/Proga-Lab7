@@ -14,7 +14,7 @@ public class Info implements Command{
     static int count = 0;
 
     @Override
-    public String execute(String args, LabWork labWork) {
+    public String execute(String args, LabWork labWork, String login) {
         String answer = "";
 
         answer += "Тип коллекции: Двунаправленная очередь";

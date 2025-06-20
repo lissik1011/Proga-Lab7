@@ -4,15 +4,25 @@ import java.io.File;
 import java.io.Serializable;
 
 import command_process.data.LabWork;
+import users.User;
+import users.UserManager;
 
 public class CreateSendableObject implements Serializable{
     String command;
     String args = "";
     LabWork labWork = null;
+    String login = "";
+    User user = null;
     File file = null;
 
     public CreateSendableObject(String command){
         this.command = command;
+        this.login = UserManager.getLogin();
+    }
+
+    public CreateSendableObject(String command, User user){
+        this.command = command;
+        this.user = user;
     }
 
     public CreateSendableObject(String command, String args){
@@ -52,4 +62,11 @@ public class CreateSendableObject implements Serializable{
         return labWork;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public  String getLogin() {
+        return login;
+    }
 }

@@ -12,7 +12,7 @@ public class GroupCountingByAuthor implements Command{
     static Map<String, Integer> authorName = new HashMap<>();
 
     @Override
-    public String execute(String args, LabWork labWork) {
+    public String execute(String args, LabWork labWork, String login) {
         int nullCounter = 0;
         String answer = "";
         if (!CollectionManager.getLabWorks().isEmpty()) {        

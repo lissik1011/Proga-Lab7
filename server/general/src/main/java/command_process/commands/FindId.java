@@ -5,7 +5,7 @@ import command_process.data.LabWork;
 
 public class FindId implements Command{
     @Override
-    public String execute(String args, LabWork labwork) {
+    public String execute(String args, LabWork labwork, String login) {
         try {
             long id = Long.parseLong(args);
         return CollectionManager.findId(id)

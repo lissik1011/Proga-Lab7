@@ -6,7 +6,7 @@ import command_process.commands.ExecuteScript;
 
 public class Name {
     public static String getName(Scanner scan) {
-        boolean bool = true;
+        boolean bool = true; // Что это вообще??
         while (bool) {
             if (ExecuteScript.getScannerType()) {
                 System.out.print("Введите название работы: ");
@@ -17,7 +17,7 @@ public class Name {
                     return scanName;
                 } else {
                     System.out.println(
-                            "Введено неверное название, оно пустое или содержит двойную кавычку. Если хотите использовать кавычки, используйте одиночные.");
+                        "Введено неверное название, оно пустое или содержит двойную кавычку. Если хотите использовать кавычки, используйте одиночные.");
                     if (!ExecuteScript.getScannerType()) {
                         bool = false;
                     }

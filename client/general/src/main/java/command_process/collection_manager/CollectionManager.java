@@ -18,6 +18,7 @@ import command_process.get.CoordinatesY;
 import command_process.get.DifficultyName;
 import command_process.get.MinimalPoint;
 import command_process.get.Name;
+import users.UserManager;
 
 public class CollectionManager{
     // public LabWork makeLabWork(String name, String coordinatesX, String coordinatesY, String minimalPoint, String difficulty, String authorName, String authorWeight, String authorPassportId, String authorLocationX, String authorLocationY, String authorLocationName) {
@@ -26,6 +27,7 @@ public class CollectionManager{
     // }
 
     public LabWork getLabWork(Scanner scan){
+        LabWork laba;
         String name = Name.getName(scan);
         int coordinatesX = CoordinatesX.getCoordX(scan);
         float coordinatesY = CoordinatesY.getCoordY(scan);
@@ -36,7 +38,7 @@ public class CollectionManager{
         if (authorName.isEmpty()) {
             LabWork labwork = new LabWork(name, new Coordinates(coordinatesX, coordinatesY),
             minimalPoint, difficulty, null);
-            return labwork;
+            laba = labwork;
         } else {
             Float authorWeight = AuthorWeight.getAWeight(scan);
             String authorPassportId = AuthorPassportId.getAPassportId(scan);
@@ -49,7 +51,10 @@ public class CollectionManager{
             new Person(authorName, authorWeight, authorPassportId,
             new Location(authorLocationX, authorLocationY, authorLocationName)));
 
-            return labwork;
+            laba = labwork;
         }
+
+        if (UserManager.getLogStat()) return new LabWork(laba, UserManager.getLogin());
+        else return laba;
     }
 }

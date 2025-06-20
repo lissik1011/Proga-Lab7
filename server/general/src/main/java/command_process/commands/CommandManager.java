@@ -9,7 +9,7 @@ public class CommandManager{
 
         if (commandLine.equals("exit") || commandLine.equals("bye")) {
             System.out.println("Завершение работы сервера.");
-            execute("exit", "");
+            execute("exit", "", "");
             System.exit(0);
         } else if (!loyalCom(commandLine)) {
             System.out.println("Лишнее количество аргументов.");
@@ -17,7 +17,7 @@ public class CommandManager{
             String com = takeCommand(commandLine)[0];
             String arg = takeCommand(commandLine)[1];
             try {
-                execute(com, arg);
+                execute(com, arg, "");
                 if (!com.equals("Find_id")) History.addHistory(com);
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
@@ -40,8 +40,8 @@ public class CommandManager{
     public boolean thisIsCommand(String comand){
         return list.getKeys().contains(comand);
     }
-    private void execute(String scancom, String args) throws IllegalArgumentException{
+    private void execute(String scancom, String args, String login) throws IllegalArgumentException{
         Command command = list.takeList().get(scancom);
-        command.execute(args, null);
+        command.execute(args, null, login);
     }
 }

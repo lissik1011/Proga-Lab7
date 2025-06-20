@@ -5,7 +5,7 @@ import command_process.data.LabWork;
 // Вывести справку по доступным командам.
 public class Help implements Command{
     @Override
-    public String execute(String args, LabWork labWork) {
+    public String execute(String args, LabWork labWork, String login) {
         String answer = "";
 
         answer += "add {element} - ";
@@ -38,6 +38,9 @@ public class Help implements Command{
         answer += "info - ";
         answer += "Вывести информацию о коллекции.\n";
 
+        answer += "log_in - ";
+        answer += "Авторизироваться.\n";
+
         answer += "print_ascending - ";
         answer += "Вывести элементы коллекции в порядке возрастания.\n";
 
@@ -49,6 +52,9 @@ public class Help implements Command{
 
         answer += "show - ";
         answer += "Вывести все элементы коллекции в строковом представлении.\n";
+
+        answer += "sign_up - ";
+        answer += "Зарегестрироваться.\n";
 
         answer += "update_by_id {id} - ";
         answer += "Обновить значение элемента коллекции, id которого равен заданному.\n";

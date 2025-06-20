@@ -2,27 +2,40 @@ package command_process.commands;
 
 import java.util.Scanner;
 
+import users.LogIn;
+import users.SignUp;
+import users.UserManager;
+
 public class CommandManeger{
 
     MakeListOfCommands list = new MakeListOfCommands();
 
     public void startProg(Scanner scan){
         while (true){
-            System.out.print("-> ");
+            if (UserManager.getLogStat()) System.out.print(UserManager.getLogin() + " -> ");
+            else System.out.print("-> ");
             if (scan.hasNextLine()){
                 String scancom = scan.nextLine().trim();
                 if (scancom.contains("exit")){
-                    try {
-                        break;
-                    } catch (IllegalArgumentException e) {
-                        System.out.println(e.getMessage());
-                    } catch (IllegalStateException e) {
-                        break;
+                    if (UserManager.getLogStat()) {
+                        UserManager.setLogStat(false);
+                        continue;
+                    } else {
+                        try {
+                            break;
+                        } catch (IllegalArgumentException e) {
+                            System.out.println(e.getMessage());
+                        } catch (IllegalStateException e) {
+                            break;
+                        }
                     }
+                } else if (scancom.contains("log_in")) {
+                    new LogIn().execute(scan);
+                } else if (scancom.contains("sign_up")) {
+                    new SignUp().execute(scan);
                 } else if (!validCom(scancom)) {
                     System.out.println("Лишнее количество аргументов. Введите help, чтобы узнать доступные команды.");
-                }
-                else if (thisIsCommand(takeCommand(scancom)[0])){
+                } else if (thisIsCommand(takeCommand(scancom)[0])){
                     String com = takeCommand(scancom)[0];
                     String arg = takeCommand(scancom)[1];
                     try {

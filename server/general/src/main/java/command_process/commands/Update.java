@@ -6,13 +6,13 @@ import command_process.data.LabWork;
 // Обновить элемент по id
 public class Update implements Command{
     @Override
-    public String execute(String args, LabWork labWork) {
+    public String execute(String args, LabWork labWork, String login) {
 
         try {
             long id = Long.parseLong(args);
             LabWork lab = CollectionManager.findLabWorkById(id);
             if (lab != null){
-                LabWork newLab = CollectionManager.getDB().update(labWork, id);
+                LabWork newLab = CollectionManager.getDB().update(labWork, id, login);
                 CollectionManager.getLabWorks().remove(lab);   
                 addLab(newLab);
                 return "Элемент обновлен.";

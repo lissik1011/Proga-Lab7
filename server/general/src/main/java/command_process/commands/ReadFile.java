@@ -9,7 +9,7 @@ import command_process.input.TakeCsv;
 
 public class ReadFile implements Command {
     @Override
-    public String execute(String args, LabWork labWork) {
+    public String execute(String args, LabWork labWork, String login) {
         Path file = Paths.get(args);
         String answer = Input.input(TakeCsv.takeCsv(file));
         if (answer.isEmpty()) {

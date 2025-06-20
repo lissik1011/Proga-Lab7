@@ -97,6 +97,10 @@ public class CollectionManager {
         return idSet.contains(id);
     }
 
+    public static void setLabWorks(Deque<LabWork> labWorks) {
+        CollectionManager.labWorks = labWorks;
+    }
+
     public void setDB(Database db){
         CollectionManager.db = db;
         labWorks.addAll(db.getLabWorks());

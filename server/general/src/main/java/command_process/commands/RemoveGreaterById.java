@@ -6,14 +6,14 @@ import command_process.data.LabWork;
 // Удалить из коллекции все элементы, превышающие заданный.
 public class RemoveGreaterById implements Command{
     @Override
-    public String execute(String args, LabWork labWork) {   
+    public String execute(String args, LabWork labWork, String login) {   
 
         try {
             long id = Long.parseLong(args);
             if (CollectionManager.getLabWorks().isEmpty()) {
                 return "Коллекция пуста.";
             } else {
-                if (CollectionManager.getDB().removeId(id, ">")) {
+                if (CollectionManager.getDB().removeId(id, ">", login)) {
                     boolean removed = CollectionManager.getLabWorks().removeIf(lab -> lab.getId() > id);
                     CollectionManager.getIdSet().stream().toList()
                         .forEach(CollectionManager::removeId);                    

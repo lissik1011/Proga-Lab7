@@ -6,9 +6,9 @@ import command_process.data.LabWork;
 // Очистить коллекцию.
 public class Clear implements Command{
     @Override
-    public String execute(String args, LabWork labwork) {
+    public String execute(String args, LabWork labwork, String login) {
 
-        if (CollectionManager.getDB().clear()) {
+        if (CollectionManager.getDB().clear(login)) {
             CollectionManager.getLabWorks().clear();
             CollectionManager.clearIdSet();
             Info.counterOfMod();

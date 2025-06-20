@@ -15,6 +15,8 @@ import command_process.data.Difficulty;
 import command_process.data.LabWork;
 import command_process.data.Location;
 import command_process.data.Person;
+import users.HashUtil;
+import users.User;
 
 public class Database {
     private static final String URL = "jdbc:postgresql://localhost:5432/studs";
@@ -91,21 +93,78 @@ public class Database {
         }
     }
 
+    // Возвращает пароль по логину
+    public byte[] getUserPW(String login) {
+        byte[] pw = {0};
+        String query = String.format("SELECT * FROM %s WHERE login = '%s'", dbPersons, login);
+        ResultSet resultSet = this.executeSQL(getPst(query));
+        try {
+            while (resultSet.next()) {
+                pw = resultSet.getBytes("password");
+            }
+            return pw;
+        } catch (SQLException e) {
+            System.out.println("");
+            return pw;
+        }
+    }
+
+    // Добавляет нового пользователя
+    public void addUser(User user) {
+
+        String query = "INSERT INTO " + dbPersons + " (login, password)" +
+                        "VALUES (?, ?)";
+    
+        PreparedStatement pst = getPst(query);
+        if (pst == null) {
+            System.out.println("Не удалось создать PreparedStatement.");
+        } else {
+            try {
+                // Заполняем основные поля
+                pst.setString(1, user.getLogin());
+                pst.setBytes(2, HashUtil.hashPassword(user.getPassword()));
+        
+                // Выполняем запрос и получаем ID
+                pst.executeQuery();
+
+            } catch (SQLException e) {
+                System.out.println("Ошбика добавления элемента в базу данных.");
+            }            
+        }
+    }
+
+    // Проверяет, есть ли такой логин
+    public boolean checkLogin(String login) {
+        byte[] pw = null;
+        String query = String.format("SELECT * FROM %s WHERE login = '%s'", dbPersons, login);
+        ResultSet resultSet = this.executeSQL(getPst(query));
+        try {
+            while (resultSet.next()) {
+                pw = resultSet.getBytes("password");
+            }
+            if (pw != null) return false;
+            return true;
+        } catch (SQLException e) {
+            System.out.println("");
+            return true; // То есть log уже сущ-ет
+        }
+    }
+
     // Удаляет запись с id = arg
-    public boolean removeId(long id, String sign) {
-        String query = String.format("DELETE FROM %s WHERE id %s %s", dbLB, sign, id);
+    public boolean removeId(long id, String sign, String login) {
+        String query = String.format("DELETE FROM %s WHERE id %s %s AND \"user\" = '%s'", dbLB, sign, id, login);
         try {
             getPst(query).executeUpdate();
             return true;
-        } catch (SQLException e) {
+        } catch (SQLException e) {  
             return false;
         }
     }
 
 
     // Удаляет все записи
-    public boolean clear() {
-        String query = String.format("DELETE FROM %s", dbLB);
+    public boolean clear(String login) {
+        String query = String.format("DELETE FROM %s WHERE \"user\" = '%s'", dbLB, login);
         try {
             getPst(query).executeUpdate();
             return true;
@@ -115,8 +174,8 @@ public class Database {
     }
 
     // Обновляет элемент в базе данных и возвращает элемент (null).
-    public LabWork update(LabWork labWork, long id) {
-        String query = String.format("UPDATE %s SET name = ?, coordinatesX = ?, coordinatesY = ?, minimalPoint = ?, difficulty = ?, authorName = ?, authorWeight = ?, authorPassportId = ?, authorLocationX = ?, authorLocationY = ?, authorLocationName = ? WHERE id = %s", dbLB, id);
+    public LabWork update(LabWork labWork, long id, String login) {
+        String query = String.format("UPDATE %s SET name = ?, coordinatesX = ?, coordinatesY = ?, minimalPoint = ?, difficulty = ?, authorName = ?, authorWeight = ?, authorPassportId = ?, authorLocationX = ?, authorLocationY = ?, authorLocationName = ? WHERE id = %s AND \"user\" = '%s'", dbLB, id, login);
     
         PreparedStatement pst = getPst(query);
         if (pst == null) {
@@ -162,15 +221,15 @@ public class Database {
     // Добавляет элемент в базу данных и возвращает элемент (null).
     public LabWork add(LabWork labWork) {
         String query = "INSERT INTO " + dbLB + " (name, coordinatesX, coordinatesY, minimalPoint, difficulty, " +
-                        "authorName, authorWeight, authorPassportId, authorLocationX, authorLocationY, authorLocationName) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+                        "authorName, authorWeight, authorPassportId, authorLocationX, authorLocationY, authorLocationName, \"user\") " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
     
         PreparedStatement pst = getPst(query);
         if (pst == null) {
             System.out.println("Не удалось создать PreparedStatement.");
             return null;
         }
-
+            
         try {
             // Заполняем основные поля
             pst.setString(1, labWork.getName());
@@ -178,7 +237,7 @@ public class Database {
             pst.setFloat(3, labWork.getCoordinates().getY());
             pst.setInt(4, labWork.getMinimalPoint());
             pst.setString(5, labWork.getDifficulty().toString());
-    
+            
             // Поля автора
             if (labWork.getAuthor() == null) {
                 pst.setNull(6, Types.VARCHAR);  // authorName
@@ -196,17 +255,18 @@ public class Database {
                 pst.setObject(10, author.getLocation().getY(), Types.FLOAT);
                 pst.setString(11, author.getLocation().getName());
             }
-    
+            pst.setString(12, labWork.getUser());
+            
             // Выполняем запрос и получаем ID
             ResultSet resultSet = pst.executeQuery();
             long id = 0;
             if (resultSet.next()) {
                 id = resultSet.getLong("id");
             }   
-    
             return getLabWork(id);
         } catch (SQLException e) {
             System.out.println("Ошбика добавления элемента в базу данных.");
+            System.out.println(e.getMessage());
             return null;
         }
     }
@@ -224,11 +284,12 @@ public class Database {
             int minimalPoint = resultSet.getInt("minimalPoint");
             Difficulty difficulty = Difficulty.valueOf(resultSet.getString("difficulty"));
             String authorName = resultSet.getString("authorName");
+            String user = resultSet.getString("user");
     
             if (authorName == null || authorName.isEmpty()) {
                 labWork = new LabWork(id, name, new Coordinates(coordinatesX, coordinatesY),
                 creationDate, minimalPoint, difficulty, null);
-                return labWork;
+                return new LabWork(labWork, user);
             } else {
                 Float authorWeight = resultSet.getFloat("authorWeight");
                 String authorPassportId = resultSet.getString("authorPassportId");
@@ -241,7 +302,7 @@ public class Database {
                 new Person(authorName, authorWeight, authorPassportId,
                 new Location(authorLocationX, authorLocationY, authorLocationName)));
             }
-            return labWork;
+            return new LabWork(labWork, user);
         } catch (SQLException e) {
             System.out.println("Ошибка чтения элемента.");
         }

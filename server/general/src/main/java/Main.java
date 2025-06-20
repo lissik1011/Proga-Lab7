@@ -17,6 +17,8 @@ import read_queries.CreateSendableObject;
 import read_queries.MakeQueries;
 import send_response.MakeResponse;
 import send_response.SendResponse;
+import users.LogIn;
+import users.SignUp;
 
 
 public class Main {
@@ -81,12 +83,25 @@ public class Main {
                     //     SendResponse.send(channel, clientAddress, MakeResponse.response("Ошибка в обработке запроса."));
                     //     continue;
                     // }
-                    Command command = list.takeList().get(query.getCommand());
-                    System.out.println("Выполнение команды " + query.getCommand());
-                    History.addHistory(query.getCommand());
-                    String response = command.execute(query.getArgs(), query.getLabWork());
+                    String commandName = query.getCommand();
+                    if (commandName.contains("log_in") || commandName.contains("sign_up")) {
+                        System.out.println("Выполнение команды " + commandName);
+                        History.addHistory(commandName);
+                        if (commandName.contains("log_in")) {
+                        String response = LogIn.execute(query.getUser());
+                        SendResponse.send(channel, clientAddress, MakeResponse.response(response));
+                        } else {
+                            String response = SignUp.execute(query.getUser());
+                            SendResponse.send(channel, clientAddress, MakeResponse.response(response));
+                        }
+                    } else {
+                        Command command = list.takeList().get(commandName);
+                        System.out.println("Выполнение команды " + commandName);
+                        History.addHistory(commandName);
+                        String response = command.execute(query.getArgs(), query.getLabWork(), query.getLogin());
 
-                    SendResponse.send(channel, clientAddress, MakeResponse.response(response));
+                        SendResponse.send(channel, clientAddress, MakeResponse.response(response));
+                    }
                 }
             }
         } catch (IOException  e) {

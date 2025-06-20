@@ -8,7 +8,7 @@ import command_process.data.LabWork;
 // Вывести элементы, значение поля name которых содержит заданную подстроку.
 public class FilterConteinsName implements Command{    
     @Override
-    public String execute(String args, LabWork labwork){
+    public String execute(String args, LabWork labwork, String login){
 
         String result = CollectionManager.getLabWorks().stream()
             .filter(lab -> lab.getName().contains(args))

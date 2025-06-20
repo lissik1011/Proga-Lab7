@@ -6,7 +6,7 @@ import command_process.data.LabWork;
 // Удалить элемент из коллекции по его id.
 public class RemoveById implements Command{
     @Override
-    public String execute(String args, LabWork labWork) {
+    public String execute(String args, LabWork labWork, String login) {
         
         try {
             long id = Long.parseLong(args);
@@ -16,7 +16,7 @@ public class RemoveById implements Command{
                 LabWork lab = CollectionManager.findLabWorkById(id);
                 if (lab == null) return "Работы с таким id не существует. REMOVEBYID";
                 else {
-                    if (CollectionManager.getDB().removeId(id, "=")) {
+                    if (CollectionManager.getDB().removeId(id, "=", login)) {
                         CollectionManager.getLabWorks().remove(lab);
                         CollectionManager.removeId(lab.getId());
                         return "Элемент с id = " + id + " успешно удален.";

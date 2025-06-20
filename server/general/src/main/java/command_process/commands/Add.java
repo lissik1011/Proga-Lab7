@@ -6,7 +6,7 @@ import command_process.data.LabWork;
 // Добавить новый элемент в коллекцию.
 public class Add implements Command{
     @Override
-    public String execute(String args, LabWork labwork) {
+    public String execute(String args, LabWork labwork, String login) {
         
         LabWork newLab = CollectionManager.getDB().add(labwork);
 

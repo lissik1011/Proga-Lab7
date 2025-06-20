@@ -15,7 +15,7 @@ public class MakeQueries {
             System.out.println("Проблема десериализации");
             return null;
         } catch (IOException e) {
-            System.out.println("Неверный формат данных. ПЕРВЫЙ");
+            System.out.println("Неверный формат данных. ПЕРВЫЙ Find me! server/read_queries/MakeQueries");
             return null;
         } catch (NullPointerException e) {
             System.out.println("Вернулся null объект с клиента");
